@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hellowy.oasys.server.mapper.DepartmentMapper">
+    <!--通用查询映射结果-->
+    <resultMap id="BaseResultMap" type="com.hellowy.oasys.server.pojo.Department">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="depPath" column="dep_path"/>
+        <result property="enabled" column="enabled"/>
+        <result property="isParent" column="is_parent"/>
+        <result property="createDate" column="create_date"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <!--递归查询所有部门-->
+    <resultMap id="getAllDeptResult" type="com.hellowy.oasys.server.pojo.Department" extends="BaseResultMap">
+        <collection property="children" ofType="com.hellowy.oasys.server.pojo.Department"
+        select="com.hellowy.oasys.server.mapper.DepartmentMapper.getAllDepartments" column="id">
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,name,parent_id,dep_path,enabled,is_parent,create_date,remark
+    </sql>
+
+    <!--修改该部门的父部门-->
+    <update id="editParentId">
+        UPDATE t_department SET parent_id = #{parentId} WHERE id = #{id}
+    </update>
+
+    <!--递归查询所有部门-->
+    <select id="getAllDepartments" resultMap="getAllDeptResult">
+        select <include refid="Base_Column_List"/>
+        from t_department
+        where parent_id = #{parentId}
+    </select>
+
+    <!--判断该部门下是否有子部门-->
+    <select id="findContainChildren" resultType="java.lang.Integer">
+        SELECT count(1) FROM t_department WHERE parent_id = #{id}
+    </select>
+</mapper>

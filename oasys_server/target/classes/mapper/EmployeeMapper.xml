@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hellowy.oasys.server.mapper.EmployeeMapper">
+
+    <!--通用查询映射结果-->
+    <resultMap id="baseResultMap" type="com.hellowy.oasys.server.pojo.Employee">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="idCard" column="id_card"/>
+        <result property="wedlock" column="wedlock"/>
+        <result property="nationId" column="nation_id"/>
+        <result property="nationPlace" column="nation_place"/>
+        <result property="politicId" column="politic_id"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="jobLevelId" column="job_level_id"/>
+        <result property="posId" column="pos_id"/>
+        <result property="engageForm" column="engage_form"/>
+        <result property="tiptopDegree" column="tiptop_degree"/>
+        <result property="specialty" column="specialty"/>
+        <result property="school" column="school"/>
+        <result property="beginDate" column="begin_date"/>
+        <result property="workState" column="work_state"/>
+        <result property="workId" column="work_id"/>
+        <result property="contractTerm" column="contract_term"/>
+        <result property="conversionTime" column="conversion_time"/>
+        <result property="notWorkTract" column="not_work_tract"/>
+        <result property="beginContract" column="begin_contract"/>
+        <result property="endContract" column="end_contract"/>
+        <result property="workAge" column="work_age"/>
+        <result property="salaryId" column="salary_id"/>
+    </resultMap>
+    <!--查询全部员工信息映射结果-->
+    <resultMap id="getAllEmployees" type="com.hellowy.oasys.server.pojo.Employee" extends="baseResultMap">
+        <association property="nation" javaType="com.hellowy.oasys.server.pojo.Nation">
+            <id property="id" column="nid"/>
+            <result property="name" column="nname"/>
+        </association>
+        <association property="department" javaType="com.hellowy.oasys.server.pojo.Department">
+            <id property="id" column="did"/>
+            <result property="name" column="dname"/>
+        </association>
+        <association property="joblevel" javaType="com.hellowy.oasys.server.pojo.Joblevel">
+            <id property="id" column="jid"/>
+            <result property="name" column="jname"/>
+        </association>
+        <association property="politicsStatus" javaType="com.hellowy.oasys.server.pojo.PoliticsStatus">
+            <id property="id" column="pid"/>
+            <result property="name" column="pname"/>
+        </association>
+        <association property="position" javaType="com.hellowy.oasys.server.pojo.Position">
+            <id property="id" column="posid"/>
+            <result property="name" column="posname"/>
+        </association>
+    </resultMap>
+    <!--查询员工奖惩信息映射结果-->
+    <resultMap id="getAllEmployeeEcMap" type="com.hellowy.oasys.server.pojo.EmployeeEc">
+        <id property="id" column="id"/>
+        <result property="eid" column="eid"/>
+        <result property="ecDate" column="ec_date"/>
+        <result property="ecReason" column="ec_reason"/>
+        <result property="ecPoint" column="ec_point"/>
+        <result property="ecType" column="ec_type"/>
+        <result property="remark" column="remark"/>
+        <!--员工映射结果集-->
+        <association property="employee" javaType="com.hellowy.oasys.server.pojo.Employee">
+            <id property="id" column="e_id"/>
+            <result property="workId" column="work_id"/>
+            <result property="name" column="e_name"/>
+        </association>
+        <!--部门映射结果集-->
+        <association property="department" javaType="com.hellowy.oasys.server.pojo.Department">
+            <id property="id" column="dep_id"/>
+            <result property="name" column="dep_name"/>
+        </association>
+    </resultMap>
+    <!--查询员工培训信息映射结果-->
+    <resultMap id="getAllEmployeeTrainMap" type="com.hellowy.oasys.server.pojo.EmployeeTrain">
+        <id property="id" column="id"/>
+        <result property="eid" column="eid"/>
+        <result property="trainDate" column="train_date"/>
+        <result property="trainContent" column="train_content"/>
+        <result property="remark" column="remark"/>
+        <!--员工映射结果集-->
+        <association property="employee" javaType="com.hellowy.oasys.server.pojo.Employee">
+            <id property="id" column="e_id"/>
+            <result property="workId" column="work_id"/>
+            <result property="name" column="e_name"/>
+        </association>
+        <!--部门映射结果集-->
+        <association property="department" javaType="com.hellowy.oasys.server.pojo.Department">
+            <id property="id" column="dep_id"/>
+            <result property="name" column="dep_name"/>
+        </association>
+    </resultMap>
+    <!--查询员工调动信息映射结果-->
+    <resultMap id="getAllEmployeeAdjMap" type="com.hellowy.oasys.server.pojo.EmployeeAdj">
+        <id property="id" column="id"/>
+        <result property="eid" column="eid"/>
+        <result property="removeDate" column="remove_date"/>
+        <result property="reason" column="reason"/>
+        <result property="remark" column="remark"/>
+        <!--员工映射结果集-->
+        <association property="employee" javaType="com.hellowy.oasys.server.pojo.Employee">
+            <id property="id" column="e_id"/>
+            <result property="name" column="e_name"/>
+            <result property="workId" column="work_id"/>
+        </association>
+        <!--调整前部门结果集-->
+        <association property="beforeDep" javaType="com.hellowy.oasys.server.pojo.Department">
+            <id property="id" column="before_tp_id"/>
+            <result property="name" column="before_tp_name"/>
+        </association>
+        <!--调整前职位结果集-->
+        <association property="beforePos" javaType="com.hellowy.oasys.server.pojo.Position">
+            <id property="id" column="before_td_id"/>
+            <result property="name" column="before_td_name"/>
+        </association>
+        <!--调整前工资结果集-->
+        <association property="beforeSalary" javaType="com.hellowy.oasys.server.pojo.Salary">
+            <id property="id" column="before_ts_id"/>
+            <result property="name" column="before_ts_name"/>
+            <result property="allSalary" column="before_ts_allsalary"/>
+        </association>
+        <!--调整后部门结果集-->
+        <association property="afterDep" javaType="com.hellowy.oasys.server.pojo.Department">
+            <id property="id" column="after_td_id"/>
+            <result property="name" column="after_td_name"/>
+        </association>
+        <!--调整后职位结果集-->
+        <association property="afterPos" javaType="com.hellowy.oasys.server.pojo.Position">
+            <id property="id" column="after_tp_id"/>
+            <result property="name" column="after_tp_name"/>
+        </association>
+        <!--调整后工资结果集-->
+        <association property="afterSalary" javaType="com.hellowy.oasys.server.pojo.Salary">
+            <id property="id" column="after_ts_id"/>
+            <result property="name" column="after_ts_name"/>
+            <result property="allSalary" column="after_ts_allsalary"/>
+        </association>
+    </resultMap>
+    <!--查询工资账套映射结果-->
+    <resultMap id="getEmployeeWithSalary" type="com.hellowy.oasys.server.pojo.Employee" extends="baseResultMap">
+        <association property="department" javaType="com.hellowy.oasys.server.pojo.Department">
+            <id property="id" column="did"/>
+            <result property="name" column="dname"/>
+        </association>
+        <association property="salary" javaType="com.hellowy.oasys.server.pojo.Salary">
+            <id property="id" column="sid"/>
+            <result property="name" column="sname"/>
+            <result property="bonus" column="sbonus"/>
+            <result property="basicSalary" column="sbasicsalary"/>
+            <result property="lunchSalary" column="slunch"/>
+            <result property="trafficSalary" column="straffic"/>
+            <result property="pensionBase" column="spensionbase"/>
+            <result property="pensionPer" column="spensionper"/>
+            <result property="createDate" column="screateDate"/>
+            <result property="medicalBase" column="smedicalbase"/>
+            <result property="medicalPer" column="smedicalper"/>
+            <result property="accumulationFundBase" column="saccumulationfundbase"/>
+            <result property="accumulationFundPer" column="saccumulationfundper"/>
+            <result property="allSalary" column="sallsalary"/>
+        </association>
+    </resultMap>
+    <!--根据条件查询员工（分页）-->
+    <select id="getAllEmployees" resultMap="getAllEmployees">
+        SELECT
+        e.*,
+        n.`id` AS nid,
+        n.`name` AS nname,
+        d.`id` AS did,
+        d.`name` AS dname,
+        j.`id` AS jid,
+        j.`name` AS jname,
+        p.`id` AS pid,
+        p.`name` AS pname,
+        pos.`id` AS posid,
+        pos.name AS posname
+        FROM
+        t_employee e,
+        t_nation n,
+        t_department d,
+        t_joblevel j,
+        t_politics_status p,
+        t_position pos
+        WHERE e.`nation_id` = n.`id`
+        AND e.`department_id` = d.`id`
+        AND e.`job_level_id` = j.`id`
+        AND e.`politic_id` = p.`id`
+        AND e.`pos_id` = pos.`id`
+        <if test="null != employeeVo.workId and '' != employeeVo.workId">
+            AND e.work_id like concat('%',#{employeeVo.workId},'%')
+        </if>
+        <if test="null != employeeVo.name and '' != employeeVo.name">
+            AND e.`name` LIKE CONCAT('%',#{employeeVo.name},'%')
+        </if>
+        <if test="null != employeeVo.gender and '' != employeeVo.gender">
+            and e.gender = #{employeeVo.gender}
+        </if>
+        <if test="null != employeeVo.idCard and '' != employeeVo.idCard">
+            and e.id_card like concat('%',#{employeeVo.idCard},'%')
+        </if>
+        <if test="null != employeeVo.wedlock and '' != employeeVo.wedlock">
+            and e.wedlock = #{employeeVo.wedlock}
+        </if>
+        <if test="null != employeeVo.nationPlace and '' != employeeVo.nationPlace">
+            and e.nation_place like concat('%',#{employeeVo.nationPlace},'%')
+        </if>
+        <if test="null != employeeVo.phone and '' != employeeVo.phone">
+            and e.phone like concat('%',#{employeeVo.phone},'%')
+        </if>
+        <if test="null != employeeVo.address and '' != employeeVo.address">
+            and e.address like concat('%',#{employeeVo.address},'%')
+        </if>
+        <if test="null != employeeVo.departmentId">
+            AND e.`department_id` = #{employeeVo.departmentId}
+        </if>
+        <if test="null != employeeVo.politicId">
+            AND e.`politic_id` = #{employeeVo.politicId}
+        </if>
+        <if test="null != employeeVo.nationId">
+            AND e.`nation_id` = #{employeeVo.nationId}
+        </if>
+        <if test="null != employeeVo.jobLevelId">
+            AND e.`job_level_id` = #{employeeVo.jobLevelId}
+        </if>
+        <if test="null != employeeVo.posId">
+            AND e.`pos_id` = #{employeeVo.posId}
+        </if>
+        <if test="null != employeeVo.engageForm and '' != employeeVo.engageForm">
+            AND e.`engage_form` = #{employeeVo.engageForm}
+        </if>
+        <if test="null != employeeVo.beginDateScope and 2 == employeeVo.beginDateScope.length">
+            AND e.`begin_contract` BETWEEN #{employeeVo.beginDateScope[0]} AND #{employeeVo.beginDateScope[1]}
+        </if>
+        ORDER BY e.`id` DESC
+    </select>
+    <!--根据id查询详细员工详细-->
+    <select id="getEmployeeById" resultMap="getAllEmployees">
+        SELECT
+        e.*,
+        n.`id` AS nid,
+        n.`name` AS nname,
+        d.`id` AS did,
+        d.`name` AS dname,
+        j.`id` AS jid,
+        j.`name` AS jname,
+        p.`id` AS pid,
+        p.`name` AS pname,
+        pos.`id` AS posid,
+        pos.name AS posname
+        FROM
+        t_employee e,
+        t_nation n,
+        t_department d,
+        t_joblevel j,
+        t_politics_status p,
+        t_position pos
+        WHERE e.`nation_id` = n.`id`
+        AND e.`department_id` = d.`id`
+        AND e.`job_level_id` = j.`id`
+        AND e.`politic_id` = p.`id`
+        AND e.`pos_id` = pos.`id`
+        <if test="null != id">
+            AND e.id = #{id}
+        </if>
+        ORDER BY e.id
+    </select>
+    <!--查询工资账套-->
+    <select id="getEmployeeWithSalary" resultMap="getEmployeeWithSalary">
+        SELECT
+        e.`id`,
+        e.`name`,
+        e.`work_id`,
+        e.`gender`,
+        e.`birthday`,
+        d.id AS did,
+        d.`name` AS dname,
+        s.`id` AS sid,
+        s.`name` AS sname,
+        s.`bonus` AS sbonus,
+        s.`basic_salary` sbasicsalary,
+        s.`lunch_salary` AS slunch,
+        s.`traffic_salary` AS straffic,
+        s.create_date as screatedate,
+        s.`pension_base` AS spensionbase,
+        s.`pension_per` AS spensionper,
+        s.create_date as screateDate,
+        s.`medical_base` AS smedicalbase,
+        s.`medical_per` AS smedicalper,
+        s.`accumulation_fund_base` AS saccumulationfundbase,
+        s.`accumulation_fund_per` AS saccumulationfundper,
+        s.`all_salary` AS sallsalary
+        FROM t_employee e
+        LEFT JOIN t_salary s ON e.`salary_id` = s.`id`
+        LEFT JOIN t_department d ON e.`department_id` = d.`id`
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="null != name and '' != name">
+                AND e.`name` LIKE concat('%',#{name},'%')
+            </if>
+            <if test="null != workId and '' != workId">
+                AND e.`work_id` LIKE concat('%',#{workId},'%')
+            </if>
+        </trim>
+        ORDER BY e.`id`
+    </select>
+    <!--查询员工奖惩信息-->
+    <select id="getAllEmployeeEc" resultMap="getAllEmployeeEcMap">
+        SELECT
+            ec.*,
+            e.id as e_id,
+            e.work_id,
+            e.NAME AS e_name,
+            dep.id AS dep_id,
+            dep.NAME AS dep_name
+        FROM
+            t_employee e,
+            t_employee_ec ec,
+            t_department dep
+        WHERE
+            ec.`eid` = e.`id`
+            AND e.department_id = dep.id
+        ORDER BY
+            ec.`id` DESC
+    </select>
+    <!--查询员工培训信息-->
+    <select id="getAllEmployeeTrain" resultMap="getAllEmployeeTrainMap">
+        SELECT
+            et.*,
+            e.id as e_id,
+            e.work_id,
+            e.NAME AS e_name,
+            dep.id AS dep_id,
+            dep.NAME AS dep_name
+        FROM
+            t_employee e,
+            t_employee_train et,
+            t_department dep
+        WHERE
+            et.`eid` = e.`id`
+            AND e.department_id = dep.id
+        ORDER BY
+            et.`id` DESC
+    </select>
+    <!--查询员工调动信息-->
+    <select id="getAllEmployeeAdj" resultMap="getAllEmployeeAdjMap">
+    SELECT
+	*
+    FROM
+        (
+        SELECT
+            ea.id,
+            e.id AS e_id,
+            e.NAME AS e_name,
+            e.work_id,
+            td.id AS before_td_id,
+            td.`name` before_td_name,
+            tp.id AS before_tp_id,
+            tp.`name` AS before_tp_name,
+            ts.id AS before_ts_id,
+            ts.NAME AS before_ts_name,
+            ts.all_salary AS before_ts_allsalary
+        FROM
+            t_employee_adj AS ea,
+            t_employee e,
+            t_department td,
+            t_position tp,
+            t_salary ts
+        WHERE
+            ea.id = e.id
+            AND ea.before_dep_id = td.id
+            AND ea.before_pos_id = tp.id
+            AND ea.before_salary_id = ts.id
+        ) AS a,
+        (
+        SELECT
+            ea.id AS ea_id_2,
+            td.id AS after_td_id,
+            td.`name` after_td_name,
+            tp.id AS after_tp_id,
+            tp.`name` AS after_tp_name,
+            ts.id AS after_ts_id,
+            ts.NAME AS after_ts_name,
+            ts.all_salary AS after_ts_allsalary,
+            ea.remove_date,
+            ea.reason,
+            ea.remark
+        FROM
+            t_employee_adj AS ea,
+            t_employee e,
+            t_department td,
+            t_position tp,
+            t_salary ts
+        WHERE
+            ea.id = e.id
+            AND ea.after_dep_id = td.id
+            AND ea.after_pos_id = tp.id
+            AND ea.after_salary_id = ts.id
+        ) AS b
+    WHERE
+	a.id = b.ea_id_2
+    </select>
+    <!--根据SalaryId删除员工信息-->
+    <delete id="removeBySaiaryId">
+        delete from t_employee where salary_id = #{id}
+    </delete>
+</mapper>

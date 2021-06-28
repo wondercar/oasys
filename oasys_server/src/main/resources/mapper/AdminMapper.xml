@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hellowy.oasys.server.mapper.AdminMapper">
+
+    <!--通用查询映射结果-->
+    <resultMap id="BaseResultMap" type="com.hellowy.oasys.server.pojo.Admin">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="telephone" column="telephone"/>
+        <result property="address" column="address"/>
+        <result property="enabled" column="enabled"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="userFace" column="user_face"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <result property="gmtModified" column="gmt_modified"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <resultMap id="getAllAdmins" type="com.hellowy.oasys.server.pojo.Admin" extends="BaseResultMap">
+        <collection property="roles" ofType="com.hellowy.oasys.server.pojo.Role">
+            <id property="id" column="rid"/>
+            <result property="name" column="rname"/>
+            <result property="code" column="rcode"/>
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,name,telephone,address,enabled,username,password,userFace,gender,age,gmt_create,gmt_modified,remark
+    </sql>
+
+    <!--更新操作员角色-->
+    <insert id="addAdminRole">
+        insert into t_admin_role(aid,rid)
+        <foreach collection="rids" item="rid" open="values" separator=",">
+            (#{adminId},#{rid})
+        </foreach>
+    </insert>
+
+    <!--除操作员及操作员角色关系表中的数据-->
+    <delete id="removeRoleByAid">
+        DELETE FROM t_admin_role WHERE aid = #{id}
+    </delete>
+
+    <!-- 根据用户id查询角色列表 -->
+    <select id="getRoles" resultType="com.hellowy.oasys.server.pojo.Role">
+        SELECT
+          r.id,
+          r.`code`,
+          r.`name`,
+          r.`gmt_create`,
+          r.`enabled`,
+          r.`remark`
+        FROM
+          t_role r,t_admin_role ar
+            WHERE r.`id` = ar.`rid`
+        AND ar.`aid` = #{adminId}
+        AND r.enabled = true
+    </select>
+
+    <!--获取所有操作员(不包括当前登录的)-->
+    <select id="getAllAdminExCurrent" resultMap="getAllAdmins">
+        SELECT
+        a.*,
+        r.id AS rid,
+        r.`name` AS rname,
+        r.`code` AS rcode
+        FROM
+        t_admin a
+        LEFT JOIN t_admin_role ar
+        ON a.`id` = ar.`aid`
+        LEFT JOIN t_role r
+        ON r.`id` = ar.`rid`
+        WHERE a.`id` != #{adminVo.id}
+        <if test="null != adminVo.name and '' != adminVo.name">
+            AND a.name LIKE CONCAT('%', #{adminVo.name}, '%')
+        </if>
+        <if test="null != adminVo.username and '' != adminVo.username">
+            AND a.username LIKE CONCAT('%',#{adminVo.username},'%')
+        </if>
+        ORDER BY a.id
+    </select>
+
+
+</mapper>

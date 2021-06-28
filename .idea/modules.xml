@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/oasys.iml" filepath="$PROJECT_DIR$/oasys.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oasys_server/oasys_server.iml" filepath="$PROJECT_DIR$/oasys_server/oasys_server.iml" />
+    </modules>
+  </component>
+</project>

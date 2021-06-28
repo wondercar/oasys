@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hellowy.oasys.server.mapper.MenuMapper">
+
+    <!--通用查询映射结果-->
+    <resultMap id="BaseResultMap" type="com.hellowy.oasys.server.pojo.Menu">
+        <id property="id" column="id"/>
+        <result property="url" column="url"/>
+        <result property="path" column="path"/>
+        <result property="component" column="component"/>
+        <result property="name" column="name"/>
+        <result property="iconCls" column="icon_cls"/>
+        <result property="keepAlive" column="keep_alive"/>
+        <result property="requireAuth" column="require_auth"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="enabled" column="enabled"/>
+    </resultMap>
+
+    <!--子菜单映射结果-->
+    <resultMap id="menus" type="com.hellowy.oasys.server.pojo.Menu" extends="BaseResultMap">
+        <collection property="children" ofType="com.hellowy.oasys.server.pojo.Menu">
+            <id property="id" column="id2"/>
+            <result property="url" column="url2"/>
+            <result property="path" column="path2"/>
+            <result property="component" column="component2"/>
+            <result property="name" column="name2"/>
+            <result property="iconCls" column="icon_cls2"/>
+            <result property="keepAlive" column="keep_alive2"/>
+            <result property="requireAuth" column="require_auth2"/>
+            <result property="parentId" column="parent_id2"/>
+            <result property="enabled" column="enabled2"/>
+        </collection>
+    </resultMap>
+
+    <!--根据角色获取菜单列表-->
+    <resultMap id="menusWithRole" type="com.hellowy.oasys.server.pojo.Menu" extends="BaseResultMap">
+        <collection property="roles" ofType="com.hellowy.oasys.server.pojo.Role">
+            <id property="id" column="rid"/>
+            <result property="name" column="rname"/>
+            <result property="code" column="rcode"/>
+        </collection>
+    </resultMap>
+
+    <!-- 查询所有菜单 -->
+    <resultMap id="menuWithChildren" type="com.hellowy.oasys.server.pojo.Menu" extends="BaseResultMap">
+        <id property="id" column="id1"/>
+        <result property="name" column="name1"/>
+        <collection property="children" ofType="com.hellowy.oasys.server.pojo.Menu">
+            <id property="id" column="id2"/>
+            <result property="name" column="name2"/>
+            <collection property="children" ofType="com.hellowy.oasys.server.pojo.Menu">
+                <id property="id" column="id3"/>
+                <result property="name" column="name3"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <!--通用查询结果列-->
+    <sql id="Base_Column_List">
+        id,url,path,component,name,icon_cls,keep_alive,require_auth,parent_id,enabled
+    </sql>
+
+
+    <!--通过用户id查询菜单列表-->
+    <select id="getMenuByAdminId" resultMap="menus">
+        SELECT
+        DISTINCT
+        m1.id,
+        m1.url,
+        m1.path,
+        m1.component,
+        m1.name,
+        m1.icon_cls,
+        m1.keep_alive,
+        m1.require_auth,
+        m1.parent_id,
+        m1.enabled,
+        m2.`id` AS id2,
+        m2.`url` AS url2,
+        m2.`path` AS path2,
+        m2.`component` AS component2,
+        m2.`name` AS name2,
+        m2.`icon_cls` AS icon_cls2,
+        m2.`keep_alive` AS keep_alive2,
+        m2.`require_auth` AS require_auth2,
+        m2.`parent_id` AS parent_id2,
+        m2.`enabled` AS enabled2
+        FROM
+        t_menu m1,
+        t_menu m2,
+        t_admin_role ar,
+        t_menu_role mr
+        WHERE
+        m1.`id` = m2.`parent_id`
+        AND
+        m2.`id` = mr.`mid`
+        AND
+        mr.`rid` = ar.`rid`
+        AND
+        ar.`aid` = #{id}
+        AND
+        m2.`enabled` = TRUE
+        ORDER BY m2.`id`
+    </select>
+
+    <!--根据角色获取菜单列表-->
+    <select id="getMenusWithRole" resultMap="menusWithRole">
+        SELECT
+            m.id,
+            m.url,
+            m.path,
+            m.component,
+            m.NAME,
+            m.icon_cls,
+            m.keep_alive,
+            m.require_auth,
+            m.parent_id,
+            m.enabled,
+            r.`id` AS rid,
+            r.`name` AS rname,
+            r.`code` AS rcode
+        FROM
+            t_menu m,
+            t_menu_role mr,
+            t_role r
+        WHERE
+            m.`id` = mr.`mid`
+            AND r.`id` = mr.`rid`
+            AND m.enabled = TRUE
+        ORDER BY
+            m.`id`
+    </select>
+
+    <!-- 查询所有菜单 -->
+    <select id="getAllMenus" resultMap="menuWithChildren">
+        SELECT
+          m1.`id` AS id1,
+          m1.`name` AS name1,
+          m2.`id` AS id2,
+          m2.`name` AS name2,
+          m3.`id` AS id3,
+          m3.`name` AS name3
+        FROM
+          t_menu m1,
+          t_menu m2,
+          t_menu m3
+        WHERE m1.id = m2.`parent_id`
+          AND m2.`id` = m3.`parent_id`
+          AND m3.`enabled` = TRUE
+    </select>
+</mapper>
